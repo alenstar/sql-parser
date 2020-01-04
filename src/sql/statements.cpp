@@ -72,7 +72,8 @@ namespace hsql {
     tableName(nullptr),
     columns(nullptr),
     viewColumns(nullptr),
-    select(nullptr) {};
+    select(nullptr),
+    primaryKeys(nullptr) {};
 
   CreateStatement::~CreateStatement() {
     free(filePath);
@@ -92,6 +93,13 @@ namespace hsql {
         free(column);
       }
       delete viewColumns;
+    }
+    
+    if (primaryKeys != nullptr) {
+      for (char* column : *primaryKeys) {
+        free(column);
+      }
+      delete primaryKeys;
     }
   }
 

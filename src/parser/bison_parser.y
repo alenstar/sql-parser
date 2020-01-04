@@ -234,6 +234,7 @@ int yyerror(YYLTYPE* llocp, SQLParserResult* result, yyscan_t scanner, const cha
 %type <with_description_vec> 	opt_with_clause with_clause with_description_list
 %type <update_vec>		update_clause_commalist
 %type <column_vec>		column_def_commalist
+%type <str_vec>		primary_key_list
 
 /******************************
  ** Token Precedence and Associativity
@@ -519,6 +520,14 @@ create_statement:
 			$$->tableName = $4.name;
 			$$->columns = $6;
 		}
+	|	CREATE TABLE opt_not_exists table_name '(' column_def_commalist ',' PRIMARY KEY '(' primary_key_list ')' ')' {
+			$$ = new CreateStatement(kCreateTable);
+			$$->ifNotExists = $3;
+			$$->schema = $4.schema;
+			$$->tableName = $4.name;
+			$$->columns = $6;
+			$$->primaryKeys = $11;
+		}
 	|	CREATE TABLE opt_not_exists table_name AS select_statement {
 			$$ = new CreateStatement(kCreateTable);
 			$$->ifNotExists = $3;
@@ -550,6 +559,11 @@ column_def:
 		IDENTIFIER column_type opt_column_nullable {
 			$$ = new ColumnDefinition($1, $2, $3);
 		}
+	;
+
+primary_key_list:
+		IDENTIFIER { $$ = new std::vector<char*>(); $$->push_back($1); }
+	|   primary_key_list ',' IDENTIFIER { $1->push_back($3); $$ = $1; }
 	;
 
 column_type:

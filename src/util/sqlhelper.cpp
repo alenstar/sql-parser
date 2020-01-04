@@ -1,6 +1,7 @@
 
 #include "sqlhelper.h"
 #include <iostream>
+#include <iomanip>
 #include <map>
 #include <string>
 
@@ -31,6 +32,10 @@ namespace hsql {
   }
   void inprint(const OperatorType& op, uintmax_t numIndent) {
     std::cout << indent(numIndent) << op << std::endl;
+  }
+  void inprint(const ColumnDefinition* coldef, uintmax_t numIndent) {
+    std::cout << indent(numIndent) << std::setw(16) << std::right << coldef->name << " " << std::setw(8) << std::left << 
+                                  coldef->type << "\t" << std::right << (coldef->nullable ? "null":"not null") << std::endl;
   }
 
   void printTableRefInfo(TableRef* table, uintmax_t numIndent) {
@@ -268,7 +273,21 @@ namespace hsql {
   void printCreateStatementInfo(const CreateStatement* stmt, uintmax_t numIndent) {
     inprint("CreateStatement", numIndent);
     inprint(stmt->tableName, numIndent + 1);
+    if (stmt->columns != nullptr) {
+      inprint("Columns", numIndent + 1);
+      for (auto const& col_name : *stmt->columns) {
+        inprint(col_name, numIndent + 2);
+      }
+    }
     if (stmt->filePath) inprint(stmt->filePath, numIndent + 1);
+    if (stmt->primaryKeys) {
+      inprint("Primary key", numIndent + 1);
+      std::cout << indent(numIndent + 2).c_str();
+      for (char* col_name : *stmt->primaryKeys) {
+        std::cout << col_name << " ";
+      }
+      std::cout << std::endl;
+    }
   }
 
   void printInsertStatementInfo(const InsertStatement* stmt, uintmax_t numIndent) {
