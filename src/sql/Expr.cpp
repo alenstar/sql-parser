@@ -55,10 +55,8 @@ Expr* Expr::makeOpUnary(OperatorType op, Expr* expr) {
 Expr* Expr::makeOpBinary(Expr* expr1, OperatorType op, Expr* expr2) {
     Expr* e = new Expr(kExprOperator);
     e->opType = op;
-    //e->expr = expr1;
-    //e->expr2 = expr2;
-    e->expr = expr2;
-    e->expr2 = expr1;
+    e->expr = expr1;
+    e->expr2 = expr2;
     return e;
 }
 
