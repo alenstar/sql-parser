@@ -2,6 +2,8 @@
 #define __PARSER_TYPEDEF_H__
 
 #include <vector>
+#include <map>
+#include <string>
 
 
 #ifndef YYtypeDEF_YY_SCANNER_T

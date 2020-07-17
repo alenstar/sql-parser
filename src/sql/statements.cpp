@@ -73,7 +73,8 @@ namespace hsql {
     columns(nullptr),
     viewColumns(nullptr),
     select(nullptr),
-    primaryKeys(nullptr) {};
+    primaryKeys(nullptr),
+    properyList(nullptr) {};
 
   CreateStatement::~CreateStatement() {
     free(filePath);
@@ -100,6 +101,10 @@ namespace hsql {
         free(column);
       }
       delete primaryKeys;
+    }
+
+    if (properyList != nullptr) {
+      delete properyList;
     }
   }
 

@@ -230,7 +230,7 @@ COMMIT      TOKEN(COMMIT)
 	return SQL_IDENTIFIER;
 }
 
-\'                          { BEGIN singlequotedstring; strbuf = std::stringstream{}; }
+\'                          { BEGIN singlequotedstring; strbuf.str(""); }
 <singlequotedstring>\'\'    { strbuf << '\''; }
 <singlequotedstring>[^']*   { strbuf << yytext; }
 <singlequotedstring>\'      { BEGIN 0; yylval->sval = strdup(strbuf.str().c_str()); return SQL_STRING; }

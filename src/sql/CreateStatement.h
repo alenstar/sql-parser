@@ -3,7 +3,7 @@
 
 #include "SQLStatement.h"
 #include "ColumnType.h"
-
+#include <map>
 #include <ostream>
 
 // Note: Implementations of constructors and destructors can be found in statements.cpp.
@@ -41,6 +41,7 @@ namespace hsql {
     std::vector<char*>* viewColumns;
     SelectStatement* select;
     std::vector<char*>* primaryKeys;
+    std::map<std::string, std::string>* properyList;
   };
 
 } // namespace hsql

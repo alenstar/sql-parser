@@ -288,6 +288,15 @@ namespace hsql {
       }
       std::cout << std::endl;
     }
+
+    if (stmt->properyList) {
+      inprint("Propery List", numIndent + 1);
+      std::cout << indent(numIndent + 2).c_str();
+      for (auto const& kv: *stmt->properyList) {
+        std::cout << kv.first << "=" << kv.second <<" ";
+      }
+      std::cout << std::endl;
+    }
   }
 
   void printInsertStatementInfo(const InsertStatement* stmt, uintmax_t numIndent) {

@@ -132,6 +132,7 @@ int yyerror(YYLTYPE* llocp, SQLParserResult* result, yyscan_t scanner, const cha
 	std::vector<hsql::SQLStatement*>* stmt_vec;
 
 	std::vector<char*>* str_vec;
+	std::map<std::string, std::string>* str_map;
 	std::vector<hsql::TableRef*>* table_vec;
 	std::vector<hsql::ColumnDefinition*>* column_vec;
 	std::vector<hsql::UpdateClause*>* update_vec;
@@ -155,6 +156,11 @@ int yyerror(YYLTYPE* llocp, SQLParserResult* result, yyscan_t scanner, const cha
 	}
 	delete ($$);
 } <str_vec> <table_vec> <column_vec> <update_vec> <expr_vec> <order_vec> <stmt_vec>
+%destructor {
+	if (($$) != nullptr) {
+		delete ($$);
+	}
+} <str_map> 
 %destructor { delete ($$); } <*>
 
 
@@ -234,7 +240,8 @@ int yyerror(YYLTYPE* llocp, SQLParserResult* result, yyscan_t scanner, const cha
 %type <with_description_vec> 	opt_with_clause with_clause with_description_list
 %type <update_vec>		update_clause_commalist
 %type <column_vec>		column_def_commalist
-%type <str_vec>		primary_key_list
+%type <str_vec>			primary_key_list
+%type <str_map>	    	property_list	
 
 /******************************
  ** Token Precedence and Associativity
@@ -528,6 +535,15 @@ create_statement:
 			$$->columns = $6;
 			$$->primaryKeys = $11;
 		}
+	|	CREATE TABLE opt_not_exists table_name '(' column_def_commalist ',' PRIMARY KEY '(' primary_key_list ')' ')' property_list {
+			$$ = new CreateStatement(kCreateTable);
+			$$->ifNotExists = $3;
+			$$->schema = $4.schema;
+			$$->tableName = $4.name;
+			$$->columns = $6;
+			$$->primaryKeys = $11;
+			$$->properyList = $14;
+		}
 	|	CREATE TABLE opt_not_exists table_name AS select_statement {
 			$$ = new CreateStatement(kCreateTable);
 			$$->ifNotExists = $3;
@@ -566,6 +582,11 @@ primary_key_list:
 	|   primary_key_list ',' IDENTIFIER { $1->push_back($3); $$ = $1; }
 	;
 
+property_list:
+		IDENTIFIER '=' STRING { $$ = new std::map<std::string,std::string>(); $$->insert(std::make_pair($1,$3)); ::free($1); ::free($3); }
+	|   property_list ',' IDENTIFIER '=' STRING { $1->insert(std::make_pair($3,$5));::free($5); ::free($3); $$ = $1; }
+	;
+	
 column_type:
 		INT { $$ = ColumnType{DataType::INT}; }
 	|	INTEGER { $$ = ColumnType{DataType::INT}; }
