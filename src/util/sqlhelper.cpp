@@ -35,7 +35,7 @@ namespace hsql {
   }
   void inprint(const ColumnDefinition* coldef, uintmax_t numIndent) {
     std::cout << indent(numIndent) << std::setw(16) << std::right << coldef->name << " " << std::setw(8) << std::left << 
-                                  coldef->type << "\t" << std::right << (coldef->nullable ? "null":"not null") << std::endl;
+                                  coldef->type << "\t" << std::right << (coldef->nullable ? "null":"not null") << "\t"  << (coldef->isunsigned ? "unsinged":"")  << std::endl;
   }
 
   void printTableRefInfo(TableRef* table, uintmax_t numIndent) {

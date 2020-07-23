@@ -3,10 +3,10 @@
 namespace hsql {
 
   // ColumnDefinition
-  ColumnDefinition::ColumnDefinition(char* name, ColumnType type, bool nullable) :
+  ColumnDefinition::ColumnDefinition(char* name, ColumnType type, bool nullable, bool isunsigned) :
     name(name),
     type(type),
-    nullable(nullable) {};
+    nullable(nullable),isunsigned(isunsigned) {};
 
   ColumnDefinition::~ColumnDefinition() {
     free(name);

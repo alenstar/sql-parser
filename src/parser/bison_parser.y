@@ -183,7 +183,7 @@ int yyerror(YYLTYPE* llocp, SQLParserResult* result, yyscan_t scanner, const cha
 %token DELTA FLOAT GROUP INDEX INNER LIMIT LOCAL MERGE MINUS ORDER
 %token OUTER RIGHT TABLE UNION USING WHERE CALL CASE CHAR COPY DATE DATETIME
 %token DESC DROP ELSE FILE FROM FULL HASH HINT INTO JOIN
-%token LEFT LIKE LOAD LONG NULL PLAN SHOW TEXT THEN TIME
+%token LEFT LIKE LOAD LONG NULL PLAN SHOW TEXT THEN TIME UNSIGNED
 %token VIEW WHEN WITH ADD ALL AND ASC END FOR INT KEY
 %token NOT OFF SET TOP AS BY IF IN IS OF ON OR TO
 %token ARRAY CONCAT ILIKE SECOND MINUTE HOUR DAY MONTH YEAR
@@ -209,7 +209,7 @@ int yyerror(YYLTYPE* llocp, SQLParserResult* result, yyscan_t scanner, const cha
 %type <show_stmt>	    show_statement
 %type <table_name>      table_name
 %type <sval> 		    file_path prepare_target_query
-%type <bval> 		    opt_not_exists opt_exists opt_distinct opt_column_nullable opt_all
+%type <bval> 		    opt_not_exists opt_exists opt_distinct opt_column_nullable opt_all opt_column_unsigned
 %type <uval>		    opt_join_type
 %type <table> 		    opt_from_clause from_clause table_ref table_ref_atomic table_ref_name nonjoin_table_ref_atomic
 %type <table>		    join_clause table_ref_name_no_alias
@@ -572,8 +572,11 @@ column_def_commalist:
 	;
 
 column_def:
-		IDENTIFIER column_type opt_column_nullable {
-			$$ = new ColumnDefinition($1, $2, $3);
+		IDENTIFIER column_type opt_column_nullable opt_column_unsigned {
+			$$ = new ColumnDefinition($1, $2, $3, $4);
+		}
+	|	IDENTIFIER column_type opt_column_unsigned opt_column_nullable {
+			$$ = new ColumnDefinition($1, $2, $4, $3);
 		}
 	;
 
@@ -604,6 +607,12 @@ opt_column_nullable:
 	|	NOT NULL { $$ = false; }
 	|	/* empty */ { $$ = false; }
 	;
+
+opt_column_unsigned:
+		UNSIGNED { $$ = true; }
+	|	/* empty */ { $$ = false; }
+	;
+	
 
 /******************************
  * Drop Statement

@@ -12,12 +12,13 @@ namespace hsql {
 
   // Represents definition of a table column
   struct ColumnDefinition {
-    ColumnDefinition(char* name, ColumnType type, bool nullable);
+    ColumnDefinition(char* name, ColumnType type, bool nullable, bool isunsigned);
     virtual ~ColumnDefinition();
 
     char* name;
     ColumnType type;
     bool nullable;
+    bool isunsigned;
   };
 
   enum CreateType {
