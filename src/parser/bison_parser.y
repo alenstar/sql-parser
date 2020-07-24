@@ -575,10 +575,13 @@ column_def:
 		IDENTIFIER column_type opt_column_nullable opt_column_unsigned {
 			$$ = new ColumnDefinition($1, $2, $3, $4);
 		}
+	;
+	/*
 	|	IDENTIFIER column_type opt_column_unsigned opt_column_nullable {
 			$$ = new ColumnDefinition($1, $2, $4, $3);
 		}
 	;
+	*/
 
 primary_key_list:
 		IDENTIFIER { $$ = new std::vector<char*>(); $$->push_back($1); }
